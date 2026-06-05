@@ -67,7 +67,7 @@ QoS 0, **retido** (o dashboard recebe o último nível ao assinar).
 > A cor de cada nível é fixa (tabela abaixo) e fica a cargo do dashboard — não
 > trafega no payload.
 
-### Escala de risco (§5 do SPEC)
+### Escala de risco 
 
 ```text
 humNorm  = clamp((umidade - 40) / 60, 0, 1)
