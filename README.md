@@ -83,7 +83,7 @@ flowchart TD
             DHT["DHT22<br/>umidade + temperatura"]
             MPU["MPU6050<br/>inclinação + Δtilt"]
         end
-        LOGIC{{"Cálculo de risco<br/>na borda (edge)<br/>§4"}}
+        LOGIC{{"Cálculo de risco<br/>na borda (edge)"}}
         subgraph OUT["Saídas (atuadores + interface)"]
             LED["4 LEDs<br/>nível de risco"]
             OLED["OLED SSD1306<br/>display local"]
