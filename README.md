@@ -40,15 +40,20 @@ já começou a se mover **agora**.
 É aí que entra o **ArgosIOT**. Ele fornece o ***ground truth*** — a verdade do
 terreno medida no ponto exato:
 
-```
-        DADOS DE SATÉLITE                      ESTAÇÃO ARGOS (IoT)
-   (visão macro, ampla, com atraso)      (visão local, precisa, tempo real)
-                 │                                      │
-                 └──────────────┬───────────────────────┘
-                                ▼
-                         APP / DASHBOARD ARGOS
-              (cruza previsão de satélite + sensores de campo
-               → previsão muito mais confiável e localizada)
+```mermaid
+flowchart TD
+    SAT["🛰️ Dados de satélite<br/>visão macro, ampla, com atraso"]
+    IOT["🏔️ Estação Argos — IoT<br/>visão local, precisa, tempo real"]
+    APP["📱 App / Dashboard Argos<br/>cruza previsão de satélite + sensores de campo<br/>→ previsão mais confiável e localizada"]
+    SAT --> APP
+    IOT --> APP
+
+    classDef macro fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+    classDef local fill:#dcfce7,stroke:#16a34a,color:#14532d;
+    classDef app fill:#f3e8ff,stroke:#9333ea,color:#581c87;
+    class SAT macro;
+    class IOT local;
+    class APP app;
 ```
 
 **O que o IoT acrescenta à previsão por satélite:**
@@ -70,28 +75,37 @@ apenas adicionar estações.
 
 ## 2. Arquitetura e fluxo de dados
 
-```
-┌─────────────────── ESTAÇÃO (ESP32) ───────────────────┐
-│                                                        │
-│  ENTRADAS                LÓGICA              SAÍDAS     │
-│  ┌────────┐         ┌──────────────┐    ┌───────────┐  │
-│  │ DHT22  │──umid──▶│              │───▶│ 4 LEDs    │  │
-│  │        │  temp   │  Cálculo de  │    │ (nível)   │  │
-│  ├────────┤         │  risco na    │    ├───────────┤  │
-│  │MPU6050 │──tilt──▶│  borda (§5)  │───▶│ OLED      │  │
-│  │        │  Δtilt  │              │    │ (display) │  │
-│  └────────┘         └──────┬───────┘    └───────────┘  │
-│                            │                           │
-└────────────────────────────┼──────────────────────────┘
-                             │ Wi-Fi + MQTT (TLS)
-                             ▼
-                    ┌──────────────────┐
-                    │  Broker HiveMQ   │
-                    └────────┬─────────┘
-                             ▼
-              ┌──────────────────────────────┐
-              │  Dashboard Node-RED  /  App   │
-              └──────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph ESTACAO["🏔️ Estação de Campo — ESP32 (autônoma)"]
+        direction LR
+        subgraph IN["Entradas (sensores)"]
+            DHT["DHT22<br/>umidade + temperatura"]
+            MPU["MPU6050<br/>inclinação + Δtilt"]
+        end
+        LOGIC{{"Cálculo de risco<br/>na borda (edge)<br/>§4"}}
+        subgraph OUT["Saídas (atuadores + interface)"]
+            LED["4 LEDs<br/>nível de risco"]
+            OLED["OLED SSD1306<br/>display local"]
+        end
+        DHT -->|umidade| LOGIC
+        MPU -->|inclinação| LOGIC
+        LOGIC --> LED
+        LOGIC --> OLED
+    end
+
+    ESTACAO -->|"Wi-Fi + MQTT/TLS<br/>3 tópicos"| BROKER(["☁️ Broker HiveMQ Cloud"])
+    BROKER --> DASH["📊 Dashboard Node-RED"]
+    BROKER --> APP["📱 App Argos<br/>(satélite + IoT)"]
+
+    classDef sensor fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e;
+    classDef logic fill:#fef9c3,stroke:#ca8a04,color:#713f12;
+    classDef out fill:#dcfce7,stroke:#16a34a,color:#14532d;
+    classDef cloud fill:#f3e8ff,stroke:#9333ea,color:#581c87;
+    class DHT,MPU sensor;
+    class LOGIC logic;
+    class LED,OLED out;
+    class BROKER,DASH,APP cloud;
 ```
 
 Operação **totalmente autônoma**: nenhum botão ou intervenção local é necessário.
