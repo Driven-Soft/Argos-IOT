@@ -339,8 +339,8 @@ pio run            # compilar
 
 ## 8. Dashboard (Node-RED)
 
-O fluxo pronto está em [`flow.json`](flow.json). No Node-RED:
-*menu (☰) → Import → cole o conteúdo de `flow.json` → Deploy*.
+O fluxo pronto está em [`flows/flows.json`](flows/flows.json). No Node-RED:
+*menu (☰) → Import → cole o conteúdo de `flows/flows.json` → Deploy*.
 
 Depois do import, abra o nó **HiveMQ Cloud (Argos)** e preencha **usuário e senha**
 (as credenciais não são exportadas no JSON). O dashboard fica em `/ui`:
@@ -365,7 +365,7 @@ ArgosIOT/
 ├── platformio.ini         # build + dependências
 ├── diagram.json           # circuito Wokwi
 ├── wokwi.toml             # config do simulador
-├── flow.json              # dashboard Node-RED (importar e dar Deploy)
+├── flows/flows.json       # dashboard Node-RED (importar e dar Deploy)
 ├── src/main.cpp           # firmware do ESP32
 └── docs/mqtt.md           # documentação dos 3 tópicos MQTT
 ```
@@ -382,7 +382,7 @@ ArgosIOT/
 | **Interface local** | OLED SSD1306 |
 | **Comunicação Wi-Fi** | `Wokwi-GUEST` |
 | **MQTT / ≥ 3 tópicos** | `leituras`, `risco`, `status` (HiveMQ, TLS) |
-| **Dashboard** | Node-RED (`flow.json`) |
+| **Dashboard** | Node-RED (`flows/flows.json`) |
 | **Lógica na borda** | Cálculo de risco de deslizamento no ESP32 |
 
 ---
