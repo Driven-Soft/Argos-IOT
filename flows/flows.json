@@ -1,0 +1,787 @@
+[
+    {
+        "id": "tab-argos",
+        "type": "tab",
+        "label": "Argos Encosta",
+        "disabled": false,
+        "info": "Dashboard da Estacao Argos de Encosta (ESP32). Assina os 3 topicos MQTT da estacao: leituras, risco e status."
+    },
+    {
+        "id": "mqtt-leituras",
+        "type": "mqtt in",
+        "z": "tab-argos",
+        "name": "argos/.../leituras",
+        "topic": "argos/estacao/+/leituras",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "argos-hivemq",
+        "nl": false,
+        "rap": false,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "json-leituras"
+            ]
+        ]
+    },
+    {
+        "id": "json-leituras",
+        "type": "json",
+        "z": "tab-argos",
+        "name": "Parse JSON",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 350,
+        "y": 120,
+        "wires": [
+            [
+                "ch-umidade",
+                "ch-inclinacao",
+                "dbg-payload"
+            ]
+        ]
+    },
+    {
+        "id": "ch-umidade",
+        "type": "change",
+        "z": "tab-argos",
+        "name": "Extrair umidade",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.umidade",
+                "tot": "msg"
+            }
+        ],
+        "x": 560,
+        "y": 80,
+        "wires": [
+            [
+                "fn-umidade"
+            ]
+        ]
+    },
+    {
+        "id": "fn-umidade",
+        "type": "function",
+        "z": "tab-argos",
+        "name": "Parse umidade",
+        "func": "msg.payload = parseFloat(msg.payload);\nif (isNaN(msg.payload)) { return null; }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 760,
+        "y": 80,
+        "wires": [
+            [
+                "g-umidade",
+                "c-umidade"
+            ]
+        ]
+    },
+    {
+        "id": "g-umidade",
+        "type": "ui_gauge",
+        "z": "tab-argos",
+        "name": "Umidade",
+        "group": "grp-leituras",
+        "order": 1,
+        "width": 6,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Umidade do Ar",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 100,
+        "colors": [
+            "#2dc653",
+            "#f4a261",
+            "#e63946"
+        ],
+        "seg1": "60",
+        "seg2": "80",
+        "x": 980,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "c-umidade",
+        "type": "ui_chart",
+        "z": "tab-argos",
+        "name": "Grafico umidade",
+        "group": "grp-leituras",
+        "order": 3,
+        "width": 6,
+        "height": 4,
+        "label": "Umidade (%)",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Aguardando dados",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "2",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#2dc653",
+            "#aec7e8",
+            "#ff7f0e"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 990,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ch-inclinacao",
+        "type": "change",
+        "z": "tab-argos",
+        "name": "Extrair inclinacao",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.inclinacao",
+                "tot": "msg"
+            }
+        ],
+        "x": 565,
+        "y": 160,
+        "wires": [
+            [
+                "fn-inclinacao"
+            ]
+        ]
+    },
+    {
+        "id": "fn-inclinacao",
+        "type": "function",
+        "z": "tab-argos",
+        "name": "Parse inclinacao",
+        "func": "msg.payload = parseFloat(msg.payload);\nif (isNaN(msg.payload)) { return null; }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 765,
+        "y": 160,
+        "wires": [
+            [
+                "g-inclinacao",
+                "c-inclinacao"
+            ]
+        ]
+    },
+    {
+        "id": "g-inclinacao",
+        "type": "ui_gauge",
+        "z": "tab-argos",
+        "name": "Inclinacao",
+        "group": "grp-leituras",
+        "order": 2,
+        "width": 6,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Inclinacao do Terreno",
+        "label": "graus",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 90,
+        "colors": [
+            "#2dc653",
+            "#f4a261",
+            "#e63946"
+        ],
+        "seg1": "15",
+        "seg2": "30",
+        "x": 985,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "c-inclinacao",
+        "type": "ui_chart",
+        "z": "tab-argos",
+        "name": "Grafico inclinacao",
+        "group": "grp-leituras",
+        "order": 4,
+        "width": 6,
+        "height": 4,
+        "label": "Inclinacao (graus)",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Aguardando dados",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "90",
+        "removeOlder": "2",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#f97316",
+            "#aec7e8",
+            "#ff7f0e"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 995,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dbg-payload",
+        "type": "debug",
+        "z": "tab-argos",
+        "name": "Debug payload",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "mqtt-risco",
+        "type": "mqtt in",
+        "z": "tab-argos",
+        "name": "argos/.../risco",
+        "topic": "argos/estacao/+/risco",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "argos-hivemq",
+        "nl": false,
+        "rap": false,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 360,
+        "wires": [
+            [
+                "json-risco"
+            ]
+        ]
+    },
+    {
+        "id": "json-risco",
+        "type": "json",
+        "z": "tab-argos",
+        "name": "Parse JSON",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 350,
+        "y": 360,
+        "wires": [
+            [
+                "ch-nivel",
+                "ch-score",
+                "sw-critico"
+            ]
+        ]
+    },
+    {
+        "id": "ch-nivel",
+        "type": "change",
+        "z": "tab-argos",
+        "name": "Extrair nivel",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.nivel",
+                "tot": "msg"
+            }
+        ],
+        "x": 550,
+        "y": 320,
+        "wires": [
+            [
+                "fn-nivel"
+            ]
+        ]
+    },
+    {
+        "id": "fn-nivel",
+        "type": "function",
+        "z": "tab-argos",
+        "name": "Formatar nivel",
+        "func": "const m = {\n  baixo:   '\\uD83D\\uDFE2 BAIXO',\n  medio:   '\\uD83D\\uDFE1 MEDIO',\n  alto:    '\\uD83D\\uDFE0 ALTO',\n  critico: '\\uD83D\\uDD34 CRITICO'\n};\nmsg.payload = m[msg.payload] || String(msg.payload).toUpperCase();\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 760,
+        "y": 320,
+        "wires": [
+            [
+                "txt-nivel"
+            ]
+        ]
+    },
+    {
+        "id": "txt-nivel",
+        "type": "ui_text",
+        "z": "tab-argos",
+        "group": "grp-risco",
+        "order": 1,
+        "width": 12,
+        "height": 2,
+        "name": "Nivel de Risco",
+        "label": "Nivel de Risco de Deslizamento",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 970,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "ch-score",
+        "type": "change",
+        "z": "tab-argos",
+        "name": "Extrair score",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.score",
+                "tot": "msg"
+            }
+        ],
+        "x": 550,
+        "y": 380,
+        "wires": [
+            [
+                "fn-score"
+            ]
+        ]
+    },
+    {
+        "id": "fn-score",
+        "type": "function",
+        "z": "tab-argos",
+        "name": "Parse score",
+        "func": "msg.payload = parseFloat(msg.payload);\nif (isNaN(msg.payload)) { return null; }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 755,
+        "y": 380,
+        "wires": [
+            [
+                "g-score"
+            ]
+        ]
+    },
+    {
+        "id": "g-score",
+        "type": "ui_gauge",
+        "z": "tab-argos",
+        "name": "Score de risco",
+        "group": "grp-risco",
+        "order": 2,
+        "width": 12,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Score de Risco",
+        "label": "0 a 1",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 1,
+        "colors": [
+            "#2dc653",
+            "#f4a261",
+            "#e63946"
+        ],
+        "seg1": "0.25",
+        "seg2": "0.75",
+        "x": 975,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "sw-critico",
+        "type": "switch",
+        "z": "tab-argos",
+        "name": "Critico?",
+        "property": "payload.nivel",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "critico",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 550,
+        "y": 440,
+        "wires": [
+            [
+                "ch-alerta"
+            ]
+        ]
+    },
+    {
+        "id": "ch-alerta",
+        "type": "change",
+        "z": "tab-argos",
+        "name": "Mensagem de alerta",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "ALERTA: RISCO CRITICO DE DESLIZAMENTO",
+                "tot": "str"
+            }
+        ],
+        "x": 770,
+        "y": 440,
+        "wires": [
+            [
+                "toast-critico"
+            ]
+        ]
+    },
+    {
+        "id": "toast-critico",
+        "type": "ui_toast",
+        "z": "tab-argos",
+        "position": "top right",
+        "displayTime": "5",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "name": "Notificacao Critico",
+        "x": 985,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "mqtt-status",
+        "type": "mqtt in",
+        "z": "tab-argos",
+        "name": "argos/.../status",
+        "topic": "argos/estacao/+/status",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "argos-hivemq",
+        "nl": false,
+        "rap": false,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 600,
+        "wires": [
+            [
+                "json-status"
+            ]
+        ]
+    },
+    {
+        "id": "json-status",
+        "type": "json",
+        "z": "tab-argos",
+        "name": "Parse JSON",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 350,
+        "y": 600,
+        "wires": [
+            [
+                "ch-online",
+                "ch-rssi",
+                "ch-uptime"
+            ]
+        ]
+    },
+    {
+        "id": "ch-online",
+        "type": "change",
+        "z": "tab-argos",
+        "name": "Extrair online",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.online",
+                "tot": "msg"
+            }
+        ],
+        "x": 555,
+        "y": 560,
+        "wires": [
+            [
+                "fn-online"
+            ]
+        ]
+    },
+    {
+        "id": "fn-online",
+        "type": "function",
+        "z": "tab-argos",
+        "name": "Formatar online",
+        "func": "msg.payload = (msg.payload === true || msg.payload === 'true') ? '\\uD83D\\uDFE2 ONLINE' : '\\uD83D\\uDD34 OFFLINE';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 765,
+        "y": 560,
+        "wires": [
+            [
+                "txt-online"
+            ]
+        ]
+    },
+    {
+        "id": "txt-online",
+        "type": "ui_text",
+        "z": "tab-argos",
+        "group": "grp-status",
+        "order": 1,
+        "width": 6,
+        "height": 2,
+        "name": "Online",
+        "label": "Estacao",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 970,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "ch-rssi",
+        "type": "change",
+        "z": "tab-argos",
+        "name": "Extrair wifi_rssi",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.wifi_rssi",
+                "tot": "msg"
+            }
+        ],
+        "x": 560,
+        "y": 600,
+        "wires": [
+            [
+                "fn-rssi"
+            ]
+        ]
+    },
+    {
+        "id": "fn-rssi",
+        "type": "function",
+        "z": "tab-argos",
+        "name": "Parse rssi",
+        "func": "msg.payload = parseFloat(msg.payload);\nif (isNaN(msg.payload)) { return null; }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 755,
+        "y": 600,
+        "wires": [
+            [
+                "g-rssi"
+            ]
+        ]
+    },
+    {
+        "id": "g-rssi",
+        "type": "ui_gauge",
+        "z": "tab-argos",
+        "name": "Sinal WiFi",
+        "group": "grp-status",
+        "order": 2,
+        "width": 6,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Sinal WiFi (RSSI)",
+        "label": "dBm",
+        "format": "{{value}}",
+        "min": -100,
+        "max": 0,
+        "colors": [
+            "#e63946",
+            "#f4a261",
+            "#2dc653"
+        ],
+        "seg1": "-80",
+        "seg2": "-60",
+        "x": 965,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "ch-uptime",
+        "type": "change",
+        "z": "tab-argos",
+        "name": "Extrair uptime_s",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.uptime_s",
+                "tot": "msg"
+            }
+        ],
+        "x": 560,
+        "y": 640,
+        "wires": [
+            [
+                "fn-uptime"
+            ]
+        ]
+    },
+    {
+        "id": "fn-uptime",
+        "type": "function",
+        "z": "tab-argos",
+        "name": "Formatar uptime",
+        "func": "let s = parseInt(msg.payload) || 0;\nlet h = Math.floor(s / 3600);\nlet m = Math.floor((s % 3600) / 60);\nlet sec = s % 60;\nmsg.payload = `${h}h ${m}m ${sec}s`;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 765,
+        "y": 640,
+        "wires": [
+            [
+                "txt-uptime"
+            ]
+        ]
+    },
+    {
+        "id": "txt-uptime",
+        "type": "ui_text",
+        "z": "tab-argos",
+        "group": "grp-status",
+        "order": 3,
+        "width": 6,
+        "height": 2,
+        "name": "Uptime",
+        "label": "Tempo Online",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 970,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "argos-hivemq",
+        "type": "mqtt-broker",
+        "name": "HiveMQ Cloud (Argos)",
+        "broker": "c175cd285334458eab19178117bdbc91.s1.eu.hivemq.cloud",
+        "port": "8883",
+        "tls": "",
+        "clientid": "nodered-argos-001",
+        "autoConnect": true,
+        "usetls": true,
+        "compatmode": false,
+        "protocolVersion": 4,
+        "keepalive": 15,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "grp-leituras",
+        "type": "ui_group",
+        "name": "Leituras (Clima + Terreno)",
+        "tab": "ui-tab-argos",
+        "order": 1,
+        "disp": true,
+        "width": 12,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "grp-risco",
+        "type": "ui_group",
+        "name": "Risco de Deslizamento",
+        "tab": "ui-tab-argos",
+        "order": 2,
+        "disp": true,
+        "width": 12,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "grp-status",
+        "type": "ui_group",
+        "name": "Status da Estacao",
+        "tab": "ui-tab-argos",
+        "order": 3,
+        "disp": true,
+        "width": 12,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ui-tab-argos",
+        "type": "ui_tab",
+        "name": "Argos Encosta",
+        "icon": "terrain",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "argos-global-config",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]

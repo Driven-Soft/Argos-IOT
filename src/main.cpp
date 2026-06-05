@@ -1,12 +1,6 @@
 // ============================================================================
 //  ARGOS IoT — Estação Argos de Encosta (ESP32)
 //  Monitoramento de risco de deslizamento na borda (edge).
-//
-//  Sensores : DHT22 (umidade/temp) + MPU6050 (inclinação do terreno)
-//  Saídas   : 4 LEDs (verde/amarelo/laranja/vermelho) + OLED SSD1306
-//  Rede     : Wi-Fi (Wokwi-GUEST) + MQTT sobre TLS (HiveMQ Cloud)
-//
-//  Ver ARGOS_IOT_SPEC.md para a especificação completa.
 // ============================================================================
 
 #include <Arduino.h>
@@ -37,7 +31,7 @@ const int   MQTT_PORT     = 8883;
 const char* MQTT_USER     = "FelipeRM564723";
 const char* MQTT_PASSWORD = "Fiap@20072006";
 
-// ── Pinos (ESP32 DevKit v1) — ver §4 do SPEC ──────────────────────
+// ── Pinos (ESP32 DevKit v1) ──────────────────────
 #define DHT_PIN     15
 #define I2C_SDA     21
 #define I2C_SCL     22
@@ -51,11 +45,11 @@ const char* MQTT_PASSWORD = "Fiap@20072006";
 #define OLED_H       64
 #define OLED_ADDR  0x3C
 
-// ── Intervalos de publicação (§6 / §7) ────────────────────────────
+// ── Intervalos de publicação ────────────────────────────
 #define INTERVALO_LEITURAS_MS  5000UL
 #define INTERVALO_STATUS_MS    30000UL
 
-// ── Limiares do cálculo de risco (§5) ─────────────────────────────
+// ── Limiares do cálculo de risco ─────────────────────────────
 #define HUM_MIN          40.0f   // 40% umidade → humNorm 0
 #define HUM_MAX         100.0f   // 100% umidade → humNorm 1
 #define TILT_MAX         30.0f   // 30° = encosta em movimento → tiltNorm 1
@@ -110,7 +104,7 @@ String topico(const char* sufixo) {
 // Cai para string vazia se o NTP ainda não sincronizou.
 String timestampISO() {
   time_t agora = time(nullptr);
-  if (agora < 100000) return "";        // relógio ainda não sincronizado
+  if (agora < 100000) return "";
   struct tm tmInfo;
   gmtime_r(&agora, &tmInfo);
   char buf[25];
@@ -137,7 +131,7 @@ void conectarWiFi() {
 }
 
 void conectarMQTT() {
-  wifiClient.setInsecure();                 // Wokwi não valida cadeia TLS
+  wifiClient.setInsecure();
   mqtt.setServer(MQTT_BROKER, MQTT_PORT);
   mqtt.setKeepAlive(60);
   mqtt.setBufferSize(512);
@@ -164,6 +158,7 @@ void conectarMQTT() {
 // ────────────────────────────────────────────────────────────────
 // Ângulo de inclinação (graus) entre o eixo do dispositivo e a gravidade.
 // 0° = plano (encosta estável) → cresce conforme o terreno se inclina.
+
 float lerInclinacao() {
   if (!mpuOk) return 0.0f;
   sensors_event_t a, g, temp;
@@ -176,7 +171,7 @@ float lerInclinacao() {
 }
 
 // ────────────────────────────────────────────────────────────────
-// Lógica de risco na borda (§5)
+// Lógica de risco na borda
 // ────────────────────────────────────────────────────────────────
 struct Risco {
   float  score;
@@ -252,7 +247,7 @@ void atualizarOLED() {
   oled.print("T:");
   if (isnan(ultTemp)) oled.print("--");
   else oled.print(ultTemp, 0);
-  oled.print((char)247);                  // símbolo de grau
+  oled.print((char)247);
   oled.print("C");
 
   oled.setCursor(0, 46);
@@ -274,8 +269,9 @@ void atualizarOLED() {
 }
 
 // ────────────────────────────────────────────────────────────────
-// Publicações MQTT (§6)
+// Publicações MQTT
 // ────────────────────────────────────────────────────────────────
+
 void publicarLeituras(float umidade, float inclinacao) {
   JsonDocument doc;
   doc["id"]         = ESTACAO_ID;
@@ -319,6 +315,7 @@ void publicarStatus() {
 // ────────────────────────────────────────────────────────────────
 // Ciclo principal de medição
 // ────────────────────────────────────────────────────────────────
+
 void cicloLeitura() {
   TempAndHumidity d = dht.getTempAndHumidity();
   float umidade     = d.humidity;
@@ -338,7 +335,6 @@ void cicloLeitura() {
 
   Risco r = calcularRisco(umidade, angulo, variacao);
 
-  // Guarda para OLED/atuadores
   ultUmidade = umidade;
   ultTemp    = temperatura;
   ultAngulo  = angulo;
