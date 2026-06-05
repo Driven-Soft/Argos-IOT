@@ -92,34 +92,34 @@
     ["esp:TX", "$serialMonitor:RX", "", []],
     ["esp:RX", "$serialMonitor:TX", "", []],
 
-    ["dht1:VCC", "esp:3V3",   "red",   []],
+    ["dht1:VCC", "esp:3V3", "red", []],
     ["dht1:GND", "esp:GND.1", "black", []],
-    ["dht1:SDA", "esp:15",    "green", []],
+    ["dht1:SDA", "esp:15", "green", []],
 
-    ["mpu1:VCC", "esp:3V3",   "red",    []],
-    ["mpu1:GND", "esp:GND.1", "black",  []],
-    ["mpu1:SDA", "esp:21",    "blue",   []],
-    ["mpu1:SCL", "esp:22",    "yellow", []],
+    ["mpu1:VCC", "esp:3V3", "red", []],
+    ["mpu1:GND", "esp:GND.1", "black", []],
+    ["mpu1:SDA", "esp:21", "blue", []],
+    ["mpu1:SCL", "esp:22", "yellow", []],
 
-    ["oled1:VCC", "esp:3V3",   "red",    []],
-    ["oled1:GND", "esp:GND.1", "black",  []],
-    ["oled1:SDA", "esp:21",    "blue",   []],
-    ["oled1:SCL", "esp:22",    "yellow", []],
+    ["oled1:VCC", "esp:3V3", "red", []],
+    ["oled1:GND", "esp:GND.1", "black", []],
+    ["oled1:SDA", "esp:21", "blue", []],
+    ["oled1:SCL", "esp:22", "yellow", []],
 
-    ["esp:2",  "rVerde:1",    "green",  []],
-    ["esp:4",  "rAmarelo:1",  "yellow", []],
-    ["esp:5",  "rLaranja:1",  "orange", []],
-    ["esp:18", "rVermelho:1", "red",    []],
+    ["esp:2", "rVerde:1", "green", []],
+    ["esp:4", "rAmarelo:1", "yellow", []],
+    ["esp:5", "rLaranja:1", "orange", []],
+    ["esp:18", "rVermelho:1", "red", []],
 
-    ["rVerde:2",    "ledVerde:A",    "green",  []],
-    ["rAmarelo:2",  "ledAmarelo:A",  "yellow", []],
-    ["rLaranja:2",  "ledLaranja:A",  "orange", []],
-    ["rVermelho:2", "ledVermelho:A", "red",    []],
+    ["rVerde:2", "ledVerde:A", "green", []],
+    ["rAmarelo:2", "ledAmarelo:A", "yellow", []],
+    ["rLaranja:2", "ledLaranja:A", "orange", []],
+    ["rVermelho:2", "ledVermelho:A", "red", []],
 
-    ["ledVerde:K",    "esp:GND.2", "black", []],
-    ["ledAmarelo:K",  "esp:GND.2", "black", []],
-    ["ledLaranja:K",  "esp:GND.2", "black", []],
-    ["ledVermelho:K", "esp:GND.2", "black", []]
+    ["ledVerde:C", "esp:GND.1", "black", []],
+    ["ledAmarelo:C", "esp:GND.1", "black", []],
+    ["ledLaranja:C", "esp:GND.1", "black", []],
+    ["ledVermelho:C", "esp:GND.1", "black", []]
   ],
   "dependencies": {}
 }
