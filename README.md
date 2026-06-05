@@ -372,17 +372,6 @@ ArgosIOT/
 
 ---
 
-## 10. Resumo dos requisitos atendidos
-
-| Requisito | Como é atendido |
-|---|---|
-| Protótipo IoT com ESP32 | ESP32 DevKit (simulado no Wokwi) |
-| **≥ 2 entradas** | DHT22 (umidade/temp) + MPU6050 (inclinação) |
-| **≥ 2 saídas** | 4 LEDs de risco |
-| **Interface local** | OLED SSD1306 |
-| **Comunicação Wi-Fi** | `Wokwi-GUEST` |
-| **MQTT / ≥ 3 tópicos** | `leituras`, `risco`, `status` (HiveMQ, TLS) |
-| **Dashboard** | Node-RED (`flows/flows.json`) |
-| **Lógica na borda** | Cálculo de risco de deslizamento no ESP32 |
-
----
+> ### 🛰️ _Onde o satélite enxerga a tempestade, a Estação Argos sente o chão se mover._
+>
+> **Argos IoT — Driven Soft** · da nuvem ao chão, transformando previsão em prevenção.
