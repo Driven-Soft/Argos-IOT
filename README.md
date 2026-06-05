@@ -1,6 +1,7 @@
 # ARGOS IoT — Estação Argos de Encosta
 
 > **Tema:** Sistemas de previsão climática e prevenção de desastres.
+> <br>
 > **Disciplina:** *Disruptive Architectures: IoT, IoB & Generative IA*.
 
 ## Equipe — Driven Soft
