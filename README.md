@@ -16,6 +16,10 @@
 
 - https://github.com/Driven-Soft/Argos-IOT
 
+### Vídeo Pitch da Estação Argos:
+
+- [https://youtu.be/jzzeTMLLm0A](http://youtube.com/watch?v=jzzeTMLLm0A)
+
 <hr>
 
 A **Estação Argos de Encosta** é a contraparte **física, de campo** da plataforma
